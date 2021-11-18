@@ -10,8 +10,8 @@ import time as t
 import datetime as dt
 import pandas as pd
 import xmltodict,json,os,configparser
-from multiprocessing import Process #,Manager
-from influxdb import InfluxDBClient,DataFrameClient
+from multiprocessing import Process 
+from influxdb import InfluxDBClient
 
 ## 初期設定
 class Initialset():
@@ -181,6 +181,6 @@ ccm_list,config=Initialset.parm_set()
 
 #UECS受信
 udp = udprecv(config)     # クラス呼び出し
-#udp.recv(debug=True,debug_sec=10,ccm_list=ccm_list)     # デバックモード　10秒間
-udp.recv(monitor=True,ccm_list=ccm_list)                 # 本番処理
+udp.recv(debug=True,debug_sec=10,ccm_list=ccm_list)     # デバックモード　10秒間
+#udp.recv(monitor=True,ccm_list=ccm_list)                 # 本番処理
 
