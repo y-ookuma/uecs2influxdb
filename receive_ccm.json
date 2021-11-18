@@ -1,0 +1,44 @@
+{
+  "トマトハウス 気温": {
+    "type": "inair_sht31temp.cMC",
+    "room": "1",
+    "region": "4",
+    "order": "1",
+    "sendlevel":"A-10S-0",
+    "savemode":"1"
+  }
+  ,"トマトハウス 湿度": {
+    "type": "inair_sht31hum.cMC",
+    "room": "1",
+    "region": "4",
+    "order": "1",
+    "sendlevel":"A-1M-1",
+    "savemode":"1"
+  }
+  ,"外気象　気温": {
+    "type": "WAirTemp.mOC",
+    "room": "1",
+    "region": "2",
+    "order": "1",
+    "sendlevel":"A-10S-1",
+    "savemode":"1"
+  }
+  ,"外気象 雨検知": {
+    "type": "WRain.mOC",
+    "room": "1",
+    "region": "2",
+    "order": "1",
+    "sendlevel":"A-10S-1",
+    "savemode":"on"
+  }
+  ,"外気象　雨量": {
+    "type": "WRainfall.mOC",
+    "room": "1",
+    "region": "2",
+    "order": "1",
+    "sendlevel":"A-1M-1",
+    "savemode":"diff"
+  }
+
+}
+
