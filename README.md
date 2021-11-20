@@ -35,3 +35,43 @@
 |          |                            |       |          |       |            |
 |          |                            |       |          |       |            |
 
+
+###### [receive_ccm.json](https://github.com/y-ookuma/uecs2influxdb/blob/main/receive_ccm.json)
+
+1. receive_ccm.jsonに記述済のCCM情報をすべてIfluxdbに格納します。
+
+2. savemodeについて
+
+   "diff"　・・・　前回のデータとの差分を絶対値として格納します。
+
+   ”on”　・・・　0，1のみ格納します。
+
+   ””　・・・　null値であってもDBに格納します。
+
+```
+  "トマトハウス 気温": {
+    "type": "inair_sht31temp.cMC",
+    "room": "1",
+    "region": "4",
+    "order": "1",
+    "sendlevel":"A-10S-0",
+    "savemode":"1"
+  }
+```
+
+
+
+###### [uecs2influxdb.cfg](https://github.com/y-ookuma/uecs2influxdb/blob/main/uecs2influxdb.cfg)
+
+uecs2influxdb.cfgにＩｎｆｌｕｘＤＢの情報を記述します。
+
+```
+[influxdb]
+host_name=localhost
+port=8086
+user=root
+pass=root
+database=uecs
+```
+
+
