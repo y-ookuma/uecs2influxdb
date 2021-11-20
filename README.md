@@ -1,5 +1,5 @@
 # uecs2influxdb
-UECS(japanese greenhouse IOT Resolution)　to Influxdb.  
+[UECS(japanese greenhouse IOT Resolution)](https://uecs.jp/)　to [Influxdb](https://www.influxdata.com/).  
 [UECS通信規約](https://uecs.jp/uecs/kiyaku/UECSStandard100_E10.pdf)
 
 ###### UECS 通信サンプル
