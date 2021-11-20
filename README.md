@@ -2,7 +2,7 @@
 [UECS(japanese greenhouse IOT Resolution)](https://uecs.jp/)　to [Influxdb](https://www.influxdata.com/).  
 [UECS通信規約](https://uecs.jp/uecs/kiyaku/UECSStandard100_E10.pdf)
 
-###### UECS 通信サンプル
+### UECS 通信サンプル
 
 ```
 <?xml version="1.0"?> 
@@ -12,7 +12,7 @@
 </UECS>
 ```
 
-###### Influxdb格納サンプル
+### Influxdb格納サンプル
 
 1. measurement名
 
@@ -20,7 +20,7 @@
 
    room,region,orderを"_"（アンダースコア）で繋ぎます。
 
-2. measurement：soiltemp_1_1_1
+2. measurement名：soiltemp_1_1_1
 
 3. Tag
 
@@ -31,12 +31,12 @@
 |          |                            | KEY   | Tag      | TAG   | TAG        |
 | -------- | -------------------------- | ----- | -------- | ----- | ---------- |
 | カラム名 | datetime                   | VALUE | Priority | Cloud | DownSample |
-| 1行      | 2021-11-20 20:19:53.776606 | 23.0  | 15       | 0     | 0          |
+| 1行目      | 2021-11-20 20:19:53.776606 | 23.0  | 15       | 0     | 0          |
 |          |                            |       |          |       |            |
 |          |                            |       |          |       |            |
 
 
-###### [receive_ccm.json](https://github.com/y-ookuma/uecs2influxdb/blob/main/receive_ccm.json)
+### [receive_ccm.json](https://github.com/y-ookuma/uecs2influxdb/blob/main/receive_ccm.json)
 
 1. receive_ccm.jsonに記述済のCCM情報をすべてIfluxdbに格納します。
 
@@ -61,7 +61,7 @@
 
 
 
-###### [uecs2influxdb.cfg](https://github.com/y-ookuma/uecs2influxdb/blob/main/uecs2influxdb.cfg)
+### [uecs2influxdb.cfg](https://github.com/y-ookuma/uecs2influxdb/blob/main/uecs2influxdb.cfg)
 
 uecs2influxdb.cfgにＩｎｆｌｕｘＤＢの情報を記述します。
 
