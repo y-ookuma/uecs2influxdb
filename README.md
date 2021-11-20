@@ -20,7 +20,7 @@
 
    room,region,orderを"_"（アンダースコア）で繋ぎます。
 
-2. measurement名：soiltemp_1_1_1
+　　measurement名：**soiltemp_1_1_1**
 
 3. Tag
 
