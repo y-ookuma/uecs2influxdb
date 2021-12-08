@@ -28,7 +28,8 @@ class Initialset():
             recv_ccm += "_" + json_load[k]["region"]
             recv_ccm += "_" + json_load[k]["order"]
             recv_ccm = recv_ccm.lower()                   # 小文字に変換
-            up_.append(recv_ccm)
+            if json_load[k]["savemode"] not in (None,""):
+                up_.append(recv_ccm)
             if json_load[k]["savemode"] == "diff":
                 diff_.append(recv_ccm)
             elif json_load[k]["savemode"] in ("on","off"):
