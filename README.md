@@ -30,9 +30,9 @@
    DownSampleは、ダウンサンプリングした場合、”1”を付与。それ以外"0"  
    ダウンサンプリング実施した後、同様のデータのDownSampleに”1”が付与されたデータを格納。24時間経過後、DownSample”0”のデータは削除予定とします。
 
-|          |                            | KEY   | Tag      | TAG   | TAG        |
+|          |                            | Fields   | Tag      | Tag   | Tag        |
 | -------- | -------------------------- | ----- | -------- | ----- | ---------- |
-| カラム名 | datetime                   | VALUE | Priority | Cloud | DownSample |
+| カラム名 | datetime                   | Value | Priority | Cloud | DownSample |
 | 1行目      | 2021-11-20 20:19:53.776606 | 23.0  | 15       | 0     | 0          |
 |          |                            |       |          |       |            |
 |          |                            |       |          |       |            |
