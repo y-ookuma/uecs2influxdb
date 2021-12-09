@@ -4,6 +4,11 @@ UECS ccmデータをInfluxdbに格納します。
 これにより[Grafana](https://grafana.com/)や[Chronograf](https://docs.influxdata.com/chronograf/)を使ってデータベースをリアルタイムに可視化することが可能になります。  
 [UECS通信規約](https://uecs.jp/uecs/kiyaku/UECSStandard100_E10.pdf)を確認ください。
 
+
+### 動作環境
+Raspberry Pi3 Raspbian Buster Lite(Release :2019-09-26)  
+MicroSD Card 16G or more / class10 / MLC  
+
 ### Install
 [インストール方法](https://github.com/y-ookuma/uecs2influxdb/wiki)を参照ください。  
 
