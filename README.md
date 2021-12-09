@@ -1,6 +1,22 @@
 # uecs2influxdb
 [UECS(japanese greenhouse IOT Resolution)](https://uecs.jp/)　to [Influxdb](https://www.influxdata.com/).  
+UECS ccmデータをInfluxdbに格納します。  
 [UECS通信規約](https://uecs.jp/uecs/kiyaku/UECSStandard100_E10.pdf)
+
+### Install
+```
+$ cd /opt  
+$ sudo mkdir uecs2influxdb  
+$ cd 
+$ sudo mv uecs2influxdb.cfg /opt/uecs2influxdb
+$ sudo mv uecs2influxdb.sh /opt/uecs2influxdb
+$ sudo mv uecs2influxdb.py /opt/uecs2influxdb
+$ sudo mv receive_ccm.json /opt/uecs2influxdb
+$ sudo cp uecs2influxdb.service /etc/systemd/system
+
+$ sudo systemctl start influxdb.service
+$ sudo systemctl enable influxdb.service
+```
 
 ### UECS 通信サンプル
 
