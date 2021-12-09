@@ -5,15 +5,18 @@ UECS ccmデータをInfluxdbに格納します。
 
 ### Install
 ```
-$ cd /opt  
-$ sudo mkdir uecs2influxdb  
-$ cd 
-$ sudo mv uecs2influxdb.cfg /opt/uecs2influxdb
-$ sudo mv uecs2influxdb.sh /opt/uecs2influxdb
-$ sudo mv uecs2influxdb.py /opt/uecs2influxdb
-$ sudo mv receive_ccm.json /opt/uecs2influxdb
-$ sudo cp uecs2influxdb.service /etc/systemd/system
+#### ライブラリインストール  
+$ sudo apt-get -y update  
+$ sudo apt-get -y install git python3-pip python3-pandas python3-influxdb  
+$ sudo pip3 install xmltodict  
 
+#### uecs2influxdbをデプロイ
+cd /opt
+sudo git clone https://github.com/y-ookuma/uecs2influxdb.git
+sudo chown pi:pi -R /opt/uecs2influxdb
+sudo chmod +x -R /opt/uecs2influxdb
+
+#### 自動起動を設定する
 $ sudo systemctl start influxdb.service
 $ sudo systemctl enable influxdb.service
 ```
