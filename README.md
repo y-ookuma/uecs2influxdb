@@ -8,6 +8,7 @@ UECS ccmデータをInfluxdbに格納します。
 ### 動作環境
 Raspberry Pi3 Raspbian Buster Lite(Release :2019-09-26)  
 MicroSD Card 16G or more / class10 / MLC  
+python3.7+
 
 ### Install
 [インストール方法](https://github.com/y-ookuma/uecs2influxdb/wiki)を参照ください。  
