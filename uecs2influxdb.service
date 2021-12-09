@@ -1,0 +1,12 @@
+[Unit]
+Description=uecs2influxDB
+After=network.target
+After=influxd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/uecs2influxdb/uecs2influxdb.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
