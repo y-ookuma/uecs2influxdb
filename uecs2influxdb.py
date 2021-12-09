@@ -17,7 +17,8 @@ from influxdb import InfluxDBClient
 class Initialset():
     def parm_set():
         # 受信設定ファイルを読み込む。
-        json_open = open('receive_ccm.json', 'r')
+        ccm_json = os.path.dirname(os.path.abspath(__file__)) + '/receive_ccm.json' #CNF
+        json_open = open(ccm_json, 'r')
         json_load = json.load(json_open)
         # 保存用種別を4つ作成
         up_ ,diff_ ,max_ ,abc_=[],[],[],[]
@@ -171,8 +172,6 @@ class udprecv():
             print("influxdb query処理に失敗しました。")
             pass
         return rs
-
-
 #-------------------------------------------------------#
 # Main 処理
 #-------------------------------------------------------#
@@ -182,6 +181,6 @@ ccm_list,config=Initialset.parm_set()
 
 #UECS受信
 udp = udprecv(config)     # クラス呼び出し
-udp.recv(debug=True,debug_sec=10,ccm_list=ccm_list)     # デバックモード　10秒間
-#udp.recv(monitor=True,ccm_list=ccm_list)                 # 本番処理
+#udp.recv(debug=True,debug_sec=10,ccm_list=ccm_list)     # デバックモード　10秒間
+udp.recv(monitor=True,ccm_list=ccm_list)                 # 本番処理
 
