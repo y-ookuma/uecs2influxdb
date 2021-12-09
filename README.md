@@ -4,22 +4,7 @@ UECS ccmデータをInfluxdbに格納します。
 [UECS通信規約](https://uecs.jp/uecs/kiyaku/UECSStandard100_E10.pdf)
 
 ### Install
-```
-#### ライブラリインストール  
-$ sudo apt-get -y update  
-$ sudo apt-get -y install git python3-pip python3-pandas python3-influxdb  
-$ sudo pip3 install xmltodict  
-
-#### uecs2influxdbをデプロイ
-cd /opt
-sudo git clone https://github.com/y-ookuma/uecs2influxdb.git
-sudo chown pi:pi -R /opt/uecs2influxdb
-sudo chmod +x -R /opt/uecs2influxdb
-
-#### 自動起動を設定する
-$ sudo systemctl start influxdb.service
-$ sudo systemctl enable influxdb.service
-```
+[インストール方法]()
 
 ### UECS 通信サンプル
 
