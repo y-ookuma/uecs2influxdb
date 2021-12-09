@@ -1,10 +1,10 @@
 # uecs2influxdb
 [UECS(japanese greenhouse IOT Resolution)](https://uecs.jp/)　to [Influxdb](https://www.influxdata.com/).  
 UECS ccmデータをInfluxdbに格納します。  
-[UECS通信規約](https://uecs.jp/uecs/kiyaku/UECSStandard100_E10.pdf)
+[UECS通信規約](https://uecs.jp/uecs/kiyaku/UECSStandard100_E10.pdf)を確認ください。
 
 ### Install
-[インストール方法]()
+[インストール方法](https://github.com/y-ookuma/uecs2influxdb/wiki)を参照ください。  
 
 ### UECS 通信サンプル
 
