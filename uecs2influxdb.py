@@ -77,8 +77,8 @@ class udprecv():
                                     , timeout=3, retries=3 )
 
 
-    def recv(self,debug=False,debug_sec=10,monitor=False,ccm_list=[]):
-        if debug:
+    def recv(self,debug=False,debug_sec=None,ccm_list=[]):
+        if debug_sec is not None:    # debug_sec が指定されている場合
             start=t.time()
             debug_list=[]
             print("ccm_list",ccm_list)
@@ -91,18 +91,16 @@ class udprecv():
             p.start()
             if p.join(5) is None:
                 p.terminate()
-            # デバックモード
-            if debug:
-                end=t.time()
-                print(ccm.decode(), addr)                            # 受信データと送信アドレス表示
-                debug_list.append(ccm)
-                print("Main process ID:",os.getppid())
-                if end-start>=debug_sec:
-                    print("debug_time:",round(end-start,2),"ExecCount:",len(debug_list))
-                    break;
-            # モニターモード　受信データのみ表示
-            if debug==False and monitor:
-                print(ccm.decode(), addr)                            # 受信データと送信アドレス表示
+            # デバックモード 
+            if debug: 
+                print(ccm.decode(), addr)                           # 受信データと送信アドレス表示
+                if debug_sec is not None:                           # 秒 指定がある場合
+                    end=t.time()
+                    debug_list.append(ccm)
+                    print("Main process ID:",os.getppid())
+                    if end-start>=debug_sec:
+                        print("debug_time:",round(end-start,2),"ExecCount:",len(debug_list))
+                        break;
 
     # DB保存処理
     def save_df(self,debug,ccm,ccm_list):
@@ -172,6 +170,8 @@ class udprecv():
             print("influxdb query処理に失敗しました。")
             pass
         return rs
+
+
 #-------------------------------------------------------#
 # Main 処理
 #-------------------------------------------------------#
@@ -182,5 +182,5 @@ ccm_list,config=Initialset.parm_set()
 #UECS受信
 udp = udprecv(config)     # クラス呼び出し
 #udp.recv(debug=True,debug_sec=10,ccm_list=ccm_list)     # デバックモード　10秒間
-udp.recv(monitor=True,ccm_list=ccm_list)                 # 本番処理
+udp.recv(debug=True,ccm_list=ccm_list)                 # 本番処理　debug_secを指定しない
 
