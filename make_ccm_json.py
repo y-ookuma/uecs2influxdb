@@ -10,10 +10,11 @@ def read_ccm_json():
     json_load = json.load(json_open)
 
     check_list,ccm_list=[],[]
-    for k in json_load.keys():
-        check_key= json_load[k]["type"].lower() +"_"+ json_load[k]["room"] +"_"+ json_load[k]["region"] +"_"+ json_load[k]["order"]
-        check_list.append(check_key)
-        ccm_list.append({"json_key": k
+    if json_load is not None:
+        for k in json_load.keys():
+            check_key= json_load[k]["type"].lower() +"_"+ json_load[k]["room"] +"_"+ json_load[k]["region"] +"_"+ json_load[k]["order"]
+            check_list.append(check_key)
+            ccm_list.append({"json_key": k
                         ,"type":       json_load[k]["type"].lower()
                         ,"room":       json_load[k]["room"]
                         ,"region":     json_load[k]["region"]
@@ -21,10 +22,12 @@ def read_ccm_json():
                         ,"sendlevel":  json_load[k]["sendlevel"]
                         ,"savemode":   json_load[k]["savemode"]})
 
-    df_json = pd.DataFrame(ccm_list
-        , columns = ['json_key','type','room','region','order','sendlevel','savemode'])
+        df_json = pd.DataFrame(ccm_list
+            , columns = ['json_key','type','room','region','order','sendlevel','savemode'])
 #    print(check_list)
-    return set(check_list),df_json
+        return set(check_list),df_json
+    else:
+        return None,None
 
 
 def kill_uecs_proc():
@@ -56,7 +59,7 @@ def start_uecs_proc():
 def capture_ccm():
     print('-------------------------------------')
     print(' 以下のCCMを取り込んでいます.........')
-    print(' 100秒間かかります...................')
+    print(' 50秒間かかります...................')
     print('-------------------------------------')
 
     #jsonファイルを読み込む
@@ -70,7 +73,7 @@ def capture_ccm():
     start=t.time()
     end=t.time()
     add_ccm=[]
-    while end - start < 100:
+    while end - start < 50:
         end=t.time()
         msg, address = s.recvfrom(512)
 
@@ -97,7 +100,7 @@ def capture_ccm():
             check_list.add(check_key)
 
             print("【" + str(len(add_ccm)) + "件】"
-                    , " 残り:"+str(100-round(end - start,1))+"秒 "
+                    , " 残り:"+str(50-round(end - start,1))+"秒 "
                     ,check_key)
 
     df_ccm = pd.DataFrame(add_ccm
@@ -105,9 +108,11 @@ def capture_ccm():
 
     # receive_ccm.json と CCMキャプチャとの結合
     df = df_json.append(df_ccm)
-    df = df.sort_values(['room','region','order','type'],ignore_index=True)  # ソート
-    df = df.drop_duplicates(subset=['room','region','order','type'], keep='last')  #重複行を削除
-    df = df.set_index("json_key",inplace=True) #インデックス を "json_key"に変更
+    print(df)
+    df.sort_values(['room','region','order','type'],ignore_index=True)  # ソート
+    df.drop_duplicates(subset=['room','region','order','type'], keep='last')  #重複行を削除
+    print(df)
+    df.set_index("json_key",inplace=True) #インデックス を "json_key"に変更
 
     print(df)
     if df is not None:
@@ -131,4 +136,3 @@ def capture_ccm():
 kill_uecs_proc()
 capture_ccm()
 start_uecs_proc()
-
