@@ -4,31 +4,22 @@ import time as t
 import xmltodict
 import pandas as pd
 
-def read_ccm_json():
-    ccm_json = os.path.dirname(os.path.abspath(__file__)) + '/receive_ccm.json' #CNF
-    json_open = open(ccm_json, 'r')
-    json_load = json.load(json_open)
+def read_ccm_json(ccm_json):
+    ccm_list=[]
+    df = pd.read_json(ccm_json ) #,encoding='unicode-escape')
 
-    check_list,ccm_list=[],[]
-    if json_load is not None:
-        for k in json_load.keys():
-            check_key= json_load[k]["type"].lower() +"_"+ json_load[k]["room"] +"_"+ json_load[k]["region"] +"_"+ json_load[k]["order"]
-            check_list.append(check_key)
-            ccm_list.append({"json_key": k
-                        ,"type":       json_load[k]["type"].lower()
-                        ,"room":       json_load[k]["room"]
-                        ,"region":     json_load[k]["region"]
-                        ,"order":      json_load[k]["order"]
-                        ,"sendlevel":  json_load[k]["sendlevel"]
-                        ,"savemode":   json_load[k]["savemode"]})
+    json_key_list=[]
+    for c in df.columns.values:
+        json_key  = df.loc['type', c] .split(".")[0].lower()   #df.loc[インデックス名, カラム名]
+        json_key += "_"+ df.loc['room', c]
+        json_key += "_"+ df.loc['region', c]
+        json_key += "_"+ df.loc['order', c]
+        json_key_list.append(json_key)
 
-        df_json = pd.DataFrame(ccm_list
-            , columns = ['json_key','type','room','region','order','sendlevel','savemode'])
-#    print(check_list)
-        return set(check_list),df_json
-    else:
-        return None,None
+    df.loc["json_key"]=json_key_list  
+    df=df.transpose()   #行と列入れ替え
 
+    return set(json_key_list),df
 
 def kill_uecs_proc():
     print('-------------------------------------')
@@ -55,16 +46,19 @@ def start_uecs_proc():
     print(' 正常に uecs2influxdb が動作していることを確認ください')
     print('------------------------------------------------------')
 
-
 def capture_ccm():
+    #jsonファイルを読み込む
+    ccm_json = os.path.dirname(os.path.abspath(__file__)) + '/receive_ccm.json' #CNF
+    if os.path.exists(ccm_json):
+        json_key_list,df_json = read_ccm_json(ccm_json)
+    else :
+        json_key_list,df_json=set([]),None
+
     print('-------------------------------------')
     print(' 以下のCCMを取り込んでいます.........')
     print(' 50秒間かかります...................')
     print('-------------------------------------')
-
-    #jsonファイルを読み込む
-    check_list,df_json = read_ccm_json()
-
+    #ccm capture start 
     HOST = ''
     PORT = 16520
     s =socket(AF_INET,SOCK_DGRAM)
@@ -82,46 +76,52 @@ def capture_ccm():
         json_string = json_string.replace('@', '').replace('#', '')  # 「#や@」 をreplace
         json_object = json.loads(json_string)                        # Stringを再度json形式で読み込む
 
-        check_key= (json_object["UECS"]["DATA"]["type"]).lower() \
+        ccm_key= (json_object["UECS"]["DATA"]["type"]).split(".")[0].lower() \
                     +"_"+ json_object["UECS"]["DATA"]["room"] \
                     +"_"+ json_object["UECS"]["DATA"]["region"] \
                     +"_"+ json_object["UECS"]["DATA"]["order"]
 
-        if check_key not in check_list:
-            add_ccm.append({"json_key":  check_key
-                    ,"type":       json_object["UECS"]["DATA"]["type"].lower()
+        if ccm_key not in json_key_list:
+            add_ccm.append({
+                     "type":       json_object["UECS"]["DATA"]["type"].split(".")[0].lower()
                     ,"room":       json_object["UECS"]["DATA"]["room"]
                     ,"region":     json_object["UECS"]["DATA"]["region"]
                     ,"order":      json_object["UECS"]["DATA"]["order"]
                     ,"sendlevel":  ""
                     ,"savemode":   ""
+                    ,"json_key":  ccm_key
                     })
 
-            check_list.add(check_key)
+            json_key_list.add(ccm_key)
 
             print("【" + str(len(add_ccm)) + "件】"
                     , " 残り:"+str(50-round(end - start,1))+"秒 "
-                    ,check_key)
+                    ,ccm_key)
 
     df_ccm = pd.DataFrame(add_ccm
-        , columns = ['json_key','type','room','region','order','sendlevel','savemode'])
+                            ,columns = ['type','room','region','order','sendlevel','savemode','json_key']
+                            )
+
+    # CCM受信の場合は、json_key をindexにする json_keyはなくなる
+    df_ccm = df_ccm.set_index('json_key')
 
     # receive_ccm.json と CCMキャプチャとの結合
-    df = df_json.append(df_ccm)
-    print(df)
-    df.sort_values(['room','region','order','type'],ignore_index=True)  # ソート
-    df.drop_duplicates(subset=['room','region','order','type'], keep='last')  #重複行を削除
-    print(df)
-    df.set_index("json_key",inplace=True) #インデックス を "json_key"に変更
+    if df_json is not None:
+        df = df_json.append(df_ccm)
+    else:
+        df = df_ccm
+    # ソート
+    df.sort_values(['room','region','order','type'],ignore_index=False, inplace = True)  
+    if 'json_key' in df.columns :
+        df.drop(columns='json_key', inplace=True) #json_key削除
 
-    print(df)
-    if df is not None:
-        output_json = df.to_json(orient="index",force_ascii=False)   #形式を指定: 全角文字（日本語）などのUnicodeエスケープ指定
+    output_json = df.to_json(orient="index",force_ascii=False)   #形式を指定: 全角文字（日本語）などのUnicodeエスケープ指定
+    parsed_output_json = json.loads(output_json)
 
-        output_json = json.loads(output_json)
+    if len(df_ccm)>0: #変更があれば
         path = os.path.dirname(os.path.abspath(__file__)) + '/receive_ccm.json' #CCMのデータをreceive_ccm.jsonに保存する
         with open(path, 'w') as f:
-            json.dump(output_json, f, ensure_ascii=False, indent=4)  #整形して出力
+            json.dump(parsed_output_json, f,indent=4, ensure_ascii=False)
 
         print('-------------------------------------------------')
         print(' receive_ccm.json を再作成完了しました。.........')
@@ -130,7 +130,6 @@ def capture_ccm():
         print('-------------------------------------------------')
         print(' receive_ccm.json の変更はありません。.........')
         print('-------------------------------------------------')
-
 
 
 kill_uecs_proc()
