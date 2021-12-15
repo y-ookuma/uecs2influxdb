@@ -6,7 +6,7 @@ import pandas as pd
 
 def read_ccm_json(ccm_json):
     ccm_list=[]
-    df = pd.read_json(ccm_json ) #,encoding='unicode-escape')
+    df = pd.read_json(ccm_json ) 
 
     json_key_list=[]
     for c in df.columns.values:
@@ -20,6 +20,7 @@ def read_ccm_json(ccm_json):
     df=df.transpose()   #行と列入れ替え
 
     return set(json_key_list),df
+
 
 def kill_uecs_proc():
     print('-------------------------------------')
@@ -46,17 +47,16 @@ def start_uecs_proc():
     print(' 正常に uecs2influxdb が動作していることを確認ください')
     print('------------------------------------------------------')
 
-def capture_ccm():
+def capture_ccm(sec_time=50):
     #jsonファイルを読み込む
     ccm_json = os.path.dirname(os.path.abspath(__file__)) + '/receive_ccm.json' #CNF
+    json_key_list,df_json=set([]),None
     if os.path.exists(ccm_json):
-        json_key_list,df_json = read_ccm_json(ccm_json)
-    else :
-        json_key_list,df_json=set([]),None
+        json_key_list,df_json = read_ccm_json(ccm_json)        
 
     print('-------------------------------------')
     print(' 以下のCCMを取り込んでいます.........')
-    print(' 50秒間かかります...................')
+    print(' '+ str(sec_time)  +'秒間かかります...................')
     print('-------------------------------------')
     #ccm capture start 
     HOST = ''
@@ -67,7 +67,7 @@ def capture_ccm():
     start=t.time()
     end=t.time()
     add_ccm=[]
-    while end - start < 50:
+    while end - start < sec_time:
         end=t.time()
         msg, address = s.recvfrom(512)
 
@@ -83,7 +83,7 @@ def capture_ccm():
 
         if ccm_key not in json_key_list:
             add_ccm.append({
-                     "type":       json_object["UECS"]["DATA"]["type"].split(".")[0].lower()
+                     "type":       json_object["UECS"]["DATA"]["type"] #.split(".")[0].lower()
                     ,"room":       json_object["UECS"]["DATA"]["room"]
                     ,"region":     json_object["UECS"]["DATA"]["region"]
                     ,"order":      json_object["UECS"]["DATA"]["order"]
@@ -95,12 +95,11 @@ def capture_ccm():
             json_key_list.add(ccm_key)
 
             print("【" + str(len(add_ccm)) + "件】"
-                    , " 残り:"+str(50-round(end - start,1))+"秒 "
+                    , " 残り:"+str(sec_time-round(end - start,1))+"秒 "
                     ,ccm_key)
 
-    df_ccm = pd.DataFrame(add_ccm
-                            ,columns = ['type','room','region','order','sendlevel','savemode','json_key']
-                            )
+    # キャプチャしたデータをDataframe化
+    df_ccm = pd.DataFrame(add_ccm ,columns= ['type','room','region','order','sendlevel','savemode','json_key'])
 
     # CCM受信の場合は、json_key をindexにする json_keyはなくなる
     df_ccm = df_ccm.set_index('json_key')
@@ -133,5 +132,5 @@ def capture_ccm():
 
 
 kill_uecs_proc()
-capture_ccm()
+capture_ccm(sec_time=60)  # 60秒間データ受信する
 start_uecs_proc()
