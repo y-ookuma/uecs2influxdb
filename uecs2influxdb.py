@@ -7,7 +7,6 @@
 #----------------------------------------------------------------------*/
 from socket import *
 import time as t
-import datetime as dt
 import pandas as pd
 import xmltodict,json,os,configparser
 from multiprocessing import Process 
@@ -76,7 +75,6 @@ class udprecv():
                                     ,config["influxdb_cloud"]["database"]
                                     , timeout=3, retries=3 )
 
-
     def recv(self,debug=False,debug_sec=None,ccm_list=[]):
         if debug_sec is not None:    # debug_sec が指定されている場合
             start=t.time()
@@ -114,7 +112,7 @@ class udprecv():
         measurement += "_" + json_object["UECS"]["DATA"]["region"]
         measurement += "_" + json_object["UECS"]["DATA"]["order"]
         measurement = measurement.lower()                             # 小文字に変換
-        datetime    = pd.to_datetime(dt.datetime.now())
+        datetime    = pd.Timestamp.utcnow()
         val         = float(json_object["UECS"]["DATA"]["text"])*1.0
         priority    = json_object["UECS"]["DATA"]["priority"]
 
@@ -155,8 +153,8 @@ class udprecv():
     def influx_write(self,debug,json_body):
         try:
             self.client.write_points(json_body)
-            if debug:
-                print(json_body)
+#            if debug:
+#                print(json_body)
         except :
             print(json_body)
             print("influxdb insert処理に失敗しました。")
@@ -171,7 +169,6 @@ class udprecv():
             pass
         return rs
 
-
 #-------------------------------------------------------#
 # Main 処理
 #-------------------------------------------------------#
@@ -183,4 +180,3 @@ ccm_list,config=Initialset.parm_set()
 udp = udprecv(config)     # クラス呼び出し
 #udp.recv(debug=True,debug_sec=10,ccm_list=ccm_list)     # デバックモード　10秒間
 udp.recv(debug=True,ccm_list=ccm_list)                 # 本番処理　debug_secを指定しない
-
